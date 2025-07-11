@@ -1,1 +1,1 @@
-# Derivitive-calculator
+# Derivative-calculator
