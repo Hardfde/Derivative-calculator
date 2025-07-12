@@ -1,5 +1,3 @@
-#might need to put main below differentiate
-#collects string to be differentiated
 from collections import defaultdict
 from math import isclose
 def main():
@@ -7,9 +5,8 @@ def main():
     plus_index = plus_index_calc(original_string)
     minus_index = minus_index_calc(original_string)
     divide_index = divide_index_calc(original_string)
-    exponent_index = exponent_index_calc(original_string)
-    derivitive = differentiate(original_string, plus_index, minus_index, divide_index, exponent_index)
-    print(f"Derivitive: {derivitive}")
+    derivative = differentiate(original_string, plus_index, minus_index, divide_index)
+    print(f"Derivative: {derivative}")
 
 #checks if a string is a real number
 def check_real(string):
@@ -32,7 +29,7 @@ def next_paren(string, start_index):
         if  string[start_index + i] == ')':
             return i + start_index
 
-
+#constructs a 2d array where the the index of plus signs are recorded based on how nested they are within parenthesis 
 def plus_index_calc(string):
     plus_index = defaultdict(list)
     a = 0
@@ -46,7 +43,7 @@ def plus_index_calc(string):
                 plus_index[d].append(i)
     return plus_index
 
-
+#constructs a 2d array where the the index of negative signs are recorded based on how nested they are within parenthesis 
 def minus_index_calc(string):
     minus_index = defaultdict(list)
     a = 0
@@ -60,6 +57,7 @@ def minus_index_calc(string):
                 minus_index[d].append(i)
     return minus_index
 
+#constructs a 2d array where the the index of division signs are recorded based on how nested they are within parenthesis 
 def divide_index_calc(string):
     divide_index = defaultdict(list)
     a = 0
@@ -73,19 +71,7 @@ def divide_index_calc(string):
                 divide_index[d].append(i)
     return divide_index
 
-def exponent_index_calc(string):
-    exponent_index = defaultdict(list)
-    a = 0
-    for i in range(len(string)):
-        if string[i] == '(':
-            a += 1
-        elif string[i] == ')':
-            a -= 1
-        elif string[i] == '^':
-            for d in range(a, -1, -1):
-                exponent_index[d].append(i)
-    return exponent_index
-
+#determines whether an expression is a singular function
 def function_check(string, starting_char):
     a = 0
     for i in range(len(string) - starting_char):
@@ -98,6 +84,7 @@ def function_check(string, starting_char):
                 return False
     return True
 
+#finds the index of the first character after parenthesis have closed
 def product_check(string):
     a = 0
     for i in range(len(string)):
@@ -108,8 +95,8 @@ def product_check(string):
         if a == 0:
             return int(i + 1)
 
-
-def differentiate(string, plus_index, minus_index, divide_index, exponent_index):
+#given a string and it's indexes calculates the derivative
+def differentiate(string, plus_index, minus_index, divide_index):
     recursion_level = 0
     #checks if input is a real number
     if check_real(string):
@@ -171,78 +158,67 @@ def differentiate(string, plus_index, minus_index, divide_index, exponent_index)
         center_plus_index = plus_index_calc(string[1:-1])
         center_minus_index = minus_index_calc(string[1:-1])
         center_divide_index = divide_index_calc(string[1:-1])
-        center_exponent_index = exponent_index_calc(string[1:-1])
-        return '(' + differentiate(string[1:-1], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ')'
+        return '(' + differentiate(string[1:-1], center_plus_index, center_minus_index, center_divide_index) + ')'
     #checks if the string is a function inside of sinx
     if string[0:4] == "sin(" and string[-1] == ')' and function_check(string, len('sin')):
         center_plus_index = plus_index_calc(string[4:-1])
         center_minus_index = minus_index_calc(string[4:-1])
         center_divide_index = divide_index_calc(string[4:-1])
-        center_exponent_index = exponent_index_calc(string[4:-1])
-        return '(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ')cos(' + string[4:]
+        return '(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index) + ')cos(' + string[4:]
     #checks if the string is a function inside of cosx
     if string[0:4] == "cos(" and string[-1] == ')' and function_check(string, len('cos')):
         center_plus_index = plus_index_calc(string[4:-1])
         center_minus_index = minus_index_calc(string[4:-1])
         center_divide_index = divide_index_calc(string[4:-1])
-        center_exponent_index = exponent_index_calc(string[4:-1])
-        return '-(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ')' + "sin(" + string[4:]
+        return '-(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "sin(" + string[4:]
     #checks if the string is a function inside of tanx
     if string[0:4] == "tan(" and string[-1] == ')' and function_check(string, len('tan')):
         center_plus_index = plus_index_calc(string[4:-1])
         center_minus_index = minus_index_calc(string[4:-1])
         center_divide_index = divide_index_calc(string[4:-1])
-        center_exponent_index = exponent_index_calc(string[4:-1])
-        return '(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ')' + "(sec(" + string[4:] + "))^2"
+        return '(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "(sec(" + string[4:] + "))^2"
     #checks if the string is a function inside of cotx
     if string[0:4] == "cot(" and string[-1] == ')' and function_check(string, len('cot')):
         center_plus_index = plus_index_calc(string[4:-1])
         center_minus_index = minus_index_calc(string[4:-1])
         center_divide_index = divide_index_calc(string[4:-1])
-        center_exponent_index = exponent_index_calc(string[4:-1])
-        return '-(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ')' + "(csc(" + string[4:] + "))^2"
+        return '-(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "(csc(" + string[4:] + "))^2"
     #checks if the string is a function inside of secx
     if string[0:4] == "sec(" and string[-1] == ')' and function_check(string, len('sec')):
         center_plus_index = plus_index_calc(string[4:-1])
         center_minus_index = minus_index_calc(string[4:-1])
         center_divide_index = divide_index_calc(string[4:-1])
-        center_exponent_index = exponent_index_calc(string[4:-1])
-        return '(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ')' + "sec(" + string[4:] + "tan(" + string[4:]
+        return '(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "sec(" + string[4:] + "tan(" + string[4:]
     #checks if the string is a function inside of cscx
     if string[0:4] == "csc(" and string[-1] == ')' and function_check(string, len('csc')):
         center_plus_index = plus_index_calc(string[4:-1])
         center_minus_index = minus_index_calc(string[4:-1])
         center_divide_index = divide_index_calc(string[4:-1])
-        center_exponent_index = exponent_index_calc(string[4:-1])
-        return '-(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ')' + "csc(" + string[4:] + "cot(" + string[4:]
+        return '-(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "csc(" + string[4:] + "cot(" + string[4:]
     #checks if the string is a function inside of arcsinx
     if string[0:7] == 'arcsin(' and string[-1] == ')' and function_check(string, len('arcsin')):
         center_plus_index = plus_index_calc(string[7:-1])
         center_minus_index = minus_index_calc(string[7:-1])
         center_divide_index = divide_index_calc(string[7:-1])
-        center_exponent_index = exponent_index_calc(string[7:-1])
-        return '(' + differentiate(string[7:-1], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ')' + "(1/((1-(" + string[7:] + '^2)^(1/2))'
+        return '(' + differentiate(string[7:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "(1/((1-(" + string[7:] + '^2)^(1/2))'
     #checks if the string is a function inside of arccosx
     if string[0:7] == 'arccos(' and string[-1] == ')' and function_check(string, len('arccos')):
         center_plus_index = plus_index_calc(string[7:-1])
         center_minus_index = minus_index_calc(string[7:-1])
         center_divide_index = divide_index_calc(string[7:-1])
-        center_exponent_index = exponent_index_calc(string[7:-1])
-        return '-(' + differentiate(string[7:-1], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ')' + "(1/((1-(" + string[7:] + '^2)^(1/2))'
+        return '-(' + differentiate(string[7:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "(1/((1-(" + string[7:] + '^2)^(1/2))'
     #checks if the string is a function inside of arctanx
     if string[0:7] == 'arctan(' and string[-1] == ')' and function_check(string, len('arctan')):
         center_plus_index = plus_index_calc(string[7:-1])
         center_minus_index = minus_index_calc(string[7:-1])
         center_divide_index = divide_index_calc(string[7:-1])
-        center_exponent_index = exponent_index_calc(string[7:-1])
-        return '(' + differentiate(string[7:-1], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ')' + "(1/(1+(" + string[7:] + '^2))'
+        return '(' + differentiate(string[7:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "(1/(1+(" + string[7:] + '^2))'
     #checks if the string is a function inside of lnx
     if string[0:3] == "ln(" and string[-1] == ')' and function_check(string, len('ln')):
         center_plus_index = plus_index_calc(string[3:-1])
         center_minus_index = minus_index_calc(string[3:-1])
         center_divide_index = divide_index_calc(string[3:-1])
-        center_exponent_index = exponent_index_calc(string[3:-1])
-        return '(' + differentiate(string[3:-1], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ')' + "(1/(" + string[3:] + ')'
+        return '(' + differentiate(string[3:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "(1/(" + string[3:] + ')'
     #checks if the string is a constant raised to the power of an expression
     if string.count('^') == 1 and (check_real(string[0:string.index('^')]) or string[0] == 'e'):
         #if the base is e, differentiate such that ln(e) is not included
@@ -252,16 +228,15 @@ def differentiate(string, plus_index, minus_index, divide_index, exponent_index)
             center_plus_index = plus_index_calc(string[3:-1])
             center_minus_index = minus_index_calc(string[3:-1])
             center_divide_index = divide_index_calc(string[3:-1])
-            center_exponent_index = exponent_index_calc(string[3:-1])
-            return "(" + differentiate(string[int(string.index('^')) + 1:], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ')' + string
+            return "(" + differentiate(string[int(string.index('^')) + 1:], center_plus_index, center_minus_index, center_divide_index) + ')' + string
+        #differentiates an exponential function with a real base
         else:
             if string[int(string.index('^')) + 1] == 'x':
                 return string + '(ln(' + string[0:string.index('^')] + '))'
             center_plus_index = plus_index_calc(string[3:-1])
             center_minus_index = minus_index_calc(string[3:-1])
             center_divide_index = divide_index_calc(string[3:-1])
-            center_exponent_index = exponent_index_calc(string[3:-1])
-            return "(" + differentiate(string[int(string.index('^')) + 1:], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ')' + '(ln(' + string[0:string.index('^')] + '))' + string 
+            return "(" + differentiate(string[int(string.index('^')) + 1:], center_plus_index, center_minus_index, center_divide_index) + ')' + '(ln(' + string[0:string.index('^')] + '))' + string 
     
     #checks if the string contains plus signs
     if string.count('+') > 0:
@@ -279,13 +254,12 @@ def differentiate(string, plus_index, minus_index, divide_index, exponent_index)
                 right_minus_index = minus_index_calc(right_substring)
                 left_divide_index = divide_index_calc(left_substring)
                 right_divide_index = divide_index_calc(right_substring)
-                left_exponent_index = exponent_index_calc(left_substring)
-                right_exponent_index = exponent_index_calc(right_substring)
                 #differentiates both expressions
-                differentiated_left = differentiate(left_substring, left_plus_index, left_minus_index, left_divide_index, left_exponent_index)
-                differentiated_right = differentiate(right_substring, right_plus_index, right_minus_index, right_divide_index, right_exponent_index)
+                differentiated_left = differentiate(left_substring, left_plus_index, left_minus_index, left_divide_index)
+                differentiated_right = differentiate(right_substring, right_plus_index, right_minus_index, right_divide_index)
                 #returns the sum of the two expressions
                 return differentiated_left + "+" + differentiated_right
+            #cycles to next plus sign
             if not isclose(i, string.count('+') - 1):
                 index = string.index('+', index + 1)
     if string.count('-') > 0:
@@ -295,13 +269,13 @@ def differentiate(string, plus_index, minus_index, divide_index, exponent_index)
             sub_plus_index = plus_index_calc(sub_expression)
             sub_minus_index = minus_index_calc(sub_expression)
             sub_divide_index = divide_index_calc(sub_expression)
-            sub_exponent_index = exponent_index_calc(sub_expression)
-            differentiated = differentiate(sub_expression, sub_plus_index, sub_minus_index, sub_divide_index, sub_exponent_index)
+            differentiated = differentiate(sub_expression, sub_plus_index, sub_minus_index, sub_divide_index)
             return "-" + differentiated
         index = string.index('-')
         for i in range(string.count('-')):
             if index not in minus_index[recursion_level + 1]:
                 recursion_level += 1
+                #splits the expression into two expressions
                 left_substring = string[0:index]
                 right_substring = string[index + 1:]
                 left_plus_index = plus_index_calc(left_substring)
@@ -310,16 +284,15 @@ def differentiate(string, plus_index, minus_index, divide_index, exponent_index)
                 right_minus_index = minus_index_calc(right_substring)
                 left_divide_index = divide_index_calc(left_substring)
                 right_divide_index = divide_index_calc(right_substring)
-                left_exponent_index = exponent_index_calc(left_substring)
-                right_exponent_index = exponent_index_calc(right_substring)
                 #differentiates both expressions
-                differentiated_left = differentiate(left_substring, left_plus_index, left_minus_index, left_divide_index, left_exponent_index)
-                differentiated_right = differentiate(right_substring, right_plus_index, right_minus_index, right_divide_index, right_exponent_index)
+                differentiated_left = differentiate(left_substring, left_plus_index, left_minus_index, left_divide_index)
+                differentiated_right = differentiate(right_substring, right_plus_index, right_minus_index, right_divide_index)
                 #returns the sum of the two expressions
                 return differentiated_left + "-" + differentiated_right
+            #cycles to next negative sign
             if not isclose(i, string.count('-') - 1):
                 index = string.index('-', index + 1)
-            #checks if the string is a simple quotient -> in the form of a/(f(x))
+    #checks if the string is a simple quotient -> in the form of a/(f(x))
     if string.count('/') == 1 and check_real(string[0]):
         i = 0
         while check_real(string[i]) or string[i] == '.':
@@ -335,40 +308,34 @@ def differentiate(string, plus_index, minus_index, divide_index, exponent_index)
                 center_plus_index = plus_index_calc(string[string.index('(') + 1:string.index(')')])
                 center_minus_index = minus_index_calc(string[string.index('(') + 1:string.index(')')])
                 center_divide_index = divide_index_calc(string[string.index('(') + 1:string.index(')')])
-                center_exponent_index = exponent_index_calc(string[string.index('(') + 1:string.index(')')])
-                return '(' + '-' + string[0] + '(' + differentiate(string[string.index('(') + 1:string.index(')')], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + '))/((' + string[string.index('(') + 1:string.index(')')] + ')^2)'
+                return '(' + '-' + string[0] + '(' + differentiate(string[string.index('(') + 1:string.index(')')], center_plus_index, center_minus_index, center_divide_index) + '))/((' + string[string.index('(') + 1:string.index(')')] + ')^2)'
             else:
                 center_plus_index = plus_index_calc(string[string.index('(') + 1:string.index(')')])
                 center_minus_index = minus_index_calc(string[string.index('(') + 1:string.index(')')])
                 center_divide_index = divide_index_calc(string[string.index('(') + 1:string.index(')')])
-                center_exponent_index = exponent_index_calc(string[string.index('(') + 1:string.index(')')])
-                return '(' + '-' + string[0:string.index('/')] + '(' + differentiate(string[string.index('(') + 1:string.index(')')], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + '))/((' + string[string.index('(') + 1:string.index(')')] + ')^2)'
+                return '(' + '-' + string[0:string.index('/')] + '(' + differentiate(string[string.index('(') + 1:string.index(')')], center_plus_index, center_minus_index, center_divide_index) + '))/((' + string[string.index('(') + 1:string.index(')')] + ')^2)'
         else:
             if i == 1:
                 center_plus_index = plus_index_calc(string[string.index('/') + 1:])
                 center_minus_index = minus_index_calc(string[string.index('/') + 1:])
                 center_divide_index = divide_index_calc(string[string.index('/') + 1:])
-                center_exponent_index = exponent_index_calc(string[string.index('/') + 1:])
-                return '(' + '-' + string[0] + '(' + differentiate(string[string.index('/') + 1:], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + '))/((' + string[string.index('/') + 1:] + ')^2)'
+                return '(' + '-' + string[0] + '(' + differentiate(string[string.index('/') + 1:], center_plus_index, center_minus_index, center_divide_index) + '))/((' + string[string.index('/') + 1:] + ')^2)'
             else:
                 center_plus_index = plus_index_calc(string[string.index('/') + 1:])
                 center_minus_index = minus_index_calc(string[string.index('/') + 1:])
                 center_divide_index = divide_index_calc(string[string.index('/') + 1:])
-                center_exponent_index = exponent_index_calc(string[string.index('/') + 1:])
-                return '(' + '-' + string[0:string.index('/')] + '(' + differentiate(string[string.index('/') + 1:], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + '))/((' + string[string.index('/') + 1:] + ')^2)'
+                return '(' + '-' + string[0:string.index('/')] + '(' + differentiate(string[string.index('/') + 1:], center_plus_index, center_minus_index, center_divide_index) + '))/((' + string[string.index('/') + 1:] + ')^2)'
     #checks if the string is a function divided by a constant -> in the form of f(x)/a
     if string.count('/') == 1 and (check_real(string[string.index('/') + 1:]) or (check_real(string[-1]) and len(string[string.index('/') + 1:]) == 0)):
         if (check_real(string[-1]) and len(string[string.index('/'):]) == 0):
             center_plus_index = plus_index_calc(string[0:string.index('/')])
             center_minus_index = minus_index_calc(string[0:string.index('/')])
             center_divide_index = divide_index_calc(string[0:string.index('/')])
-            center_exponent_index = exponent_index_calc(string[0:string.index('/')])
-            return differentiate(string[0:string.index('/')], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + '/' + string[-1]
+            return differentiate(string[0:string.index('/')], center_plus_index, center_minus_index, center_divide_index) + '/' + string[-1]
         center_plus_index = plus_index_calc(string[0:string.index('/')])
         center_minus_index = minus_index_calc(string[0:string.index('/')])
         center_divide_index = divide_index_calc(string[0:string.index('/')])
-        center_exponent_index = exponent_index_calc(string[0:string.index('/')])
-        return differentiate(string[0:string.index('/')], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + '/' + string [string.index('/') + 1:]
+        return differentiate(string[0:string.index('/')], center_plus_index, center_minus_index, center_divide_index) + '/' + string [string.index('/') + 1:]
     if string.count('/') > 0:
         #checks if whether treating the expression as the quotient of two expressions is valid
         if string.index('/') not in divide_index[recursion_level + 1]:
@@ -381,36 +348,32 @@ def differentiate(string, plus_index, minus_index, divide_index, exponent_index)
             right_minus_index = minus_index_calc(right_substring)
             left_divide_index = divide_index_calc(left_substring)
             right_divide_index = divide_index_calc(right_substring)
-            left_exponent_index = exponent_index_calc(left_substring)
-            right_exponent_index = exponent_index_calc(right_substring)
             #applies quotient rule
-            differentiated_left = differentiate(left_substring, left_plus_index, left_minus_index, left_divide_index, left_exponent_index)
-            differentiated_right = differentiate(right_substring, right_plus_index, right_minus_index, right_divide_index, right_exponent_index)
+            differentiated_left = differentiate(left_substring, left_plus_index, left_minus_index, left_divide_index)
+            differentiated_right = differentiate(right_substring, right_plus_index, right_minus_index, right_divide_index)
             return '((' + differentiated_left + ')(' + right_substring + ')-(' + left_substring + ')(' + differentiated_right + '))/((' + right_substring + ')^2)'
     if string.count('^') > 0:
         #checks if there are multiple exponents in the function
         if string.index('^') not in divide_index[recursion_level + 1]:
             recursion_level += 1
-            left_substring = string[0:string.index('^')]
-            right_substring = string[int(string.index('^')) + 1:]
-            left_plus_index = plus_index_calc(left_substring)
-            right_plus_index = plus_index_calc(right_substring)
-            left_minus_index = minus_index_calc(left_substring)
-            right_minus_index = minus_index_calc(right_substring)
-            left_divide_index = divide_index_calc(left_substring)
-            right_divide_index = divide_index_calc(right_substring)
-            left_exponent_index = exponent_index_calc(left_substring)
-            right_exponent_index = exponent_index_calc(right_substring)
-            #applies quotient rule
-            differentiated_left = differentiate(left_substring, left_plus_index, left_minus_index, left_divide_index, left_exponent_index)
-            differentiated_right = differentiate(right_substring, right_plus_index, right_minus_index, right_divide_index, right_exponent_index)
-            if check_real(left_substring) or ((check_int(string[0]) or string[0] == 'e') and string[0:string.index('^')] == ''):
+            base_substring = string[0:string.index('^')]
+            exponent_substring = string[int(string.index('^')) + 1:]
+            base_plus_index = plus_index_calc(base_substring)
+            exponent_plus_index = plus_index_calc(exponent_substring)
+            base_minus_index = minus_index_calc(base_substring)
+            exponent_minus_index = minus_index_calc(exponent_substring)
+            base_divide_index = divide_index_calc(base_substring)
+            exponent_divide_index = divide_index_calc(exponent_substring)
+            #applies exponential rule
+            differentiated_base = differentiate(base_substring, base_plus_index, base_minus_index, base_divide_index)
+            differentiated_exponent = differentiate(exponent_substring, exponent_plus_index, exponent_minus_index, exponent_divide_index)
+            if check_real(base_substring) or ((check_int(string[0]) or string[0] == 'e') and string[0:string.index('^')] == ''):
                 if string[0] == 'e':
-                    return '(' + differentiated_right + ')(' + string + ')'
-                elif check_real(left_substring):
-                    return '(' + differentiated_right + ')(' + string + ')' + '(ln(' + left_substring + '))'
+                    return '(' + differentiated_exponent + ')(' + string + ')'
+                elif check_real(base_substring):
+                    return '(' + differentiated_exponent + ')(' + string + ')' + '(ln(' + base_substring + '))'
             else:
-                return string + '((' + differentiated_right + ')ln(' + left_substring + ')+(' + right_substring + ')((' + differentiated_left + ')/(' + left_substring + '))'
+                return string + '((' + differentiated_exponent + ')ln(' + base_substring + ')+(' + exponent_substring + ')((' + differentiated_base + ')/(' + base_substring + '))'
     #checks if the string is a constant times a function
     if check_real(string[0]):
         i = 0
@@ -420,14 +383,13 @@ def differentiate(string, plus_index, minus_index, divide_index, exponent_index)
             center_plus_index = plus_index_calc(string[1:])
             center_minus_index = minus_index_calc(string[1:])
             center_divide_index = divide_index_calc(string[1:])
-            center_exponent_index = exponent_index_calc(string[1:])
-            return string[0] + "(" + differentiate(string[1:], center_plus_index, center_minus_index, center_divide_index, center_exponent_index) + ")"
+            return string[0] + "(" + differentiate(string[1:], center_plus_index, center_minus_index, center_divide_index) + ")"
         else:
             center_plus_index = plus_index_calc(string[i+1:])
             center_minus_index = minus_index_calc(string[i+1:])
             center_divide_index = divide_index_calc(string[i+1:])
-            center_exponent_index = exponent_index_calc(string[1:])
-            return string[0:i - 1] + differentiate(string[i+1:], center_plus_index, center_minus_index, center_divide_index, center_exponent_index)
+            return string[0:i - 1] + differentiate(string[i+1:], center_plus_index, center_minus_index, center_divide_index)
+    #first case of product rule ->   in the form x(sinx+1)
     if string[0] != '(' and string.count('(') > 0:
         left_substring = string[0:string.index('(')]
         right_substring = string[int(string.index('(')):]
@@ -437,9 +399,8 @@ def differentiate(string, plus_index, minus_index, divide_index, exponent_index)
         right_minus_index = minus_index_calc(right_substring)
         left_divide_index = divide_index_calc(left_substring)
         right_divide_index = divide_index_calc(right_substring)
-        left_exponent_index = exponent_index_calc(left_substring)
-        right_exponent_index = exponent_index_calc(right_substring)
-        return '(' + differentiate(left_substring, left_plus_index, left_minus_index, left_divide_index, left_exponent_index) + ')(' + right_substring + ')+(' + left_substring + ')(' + differentiate(right_substring, right_plus_index, right_minus_index, right_divide_index, right_exponent_index) + ')'
+        return '(' + differentiate(left_substring, left_plus_index, left_minus_index, left_divide_index) + ')(' + right_substring + ')+(' + left_substring + ')(' + differentiate(right_substring, right_plus_index, right_minus_index, right_divide_index) + ')'
+    #second case of product rule ->   in the form (sinx+1)lnx
     if string[-1] != ')' and string[0] == '(' and string.count('(') > 0:
         i = len(string) - 1
         while string[i] != ')':
@@ -452,9 +413,8 @@ def differentiate(string, plus_index, minus_index, divide_index, exponent_index)
         right_minus_index = minus_index_calc(right_substring)
         left_divide_index = divide_index_calc(left_substring)
         right_divide_index = divide_index_calc(right_substring)
-        left_exponent_index = exponent_index_calc(left_substring)
-        right_exponent_index = exponent_index_calc(right_substring)
-        return '(' + differentiate(left_substring, left_plus_index, left_minus_index, left_divide_index, left_exponent_index) + ')(' + right_substring + ')+(' + left_substring + ')(' + differentiate(right_substring, right_plus_index, right_minus_index, right_divide_index, right_exponent_index) + ')'
+        return '(' + differentiate(left_substring, left_plus_index, left_minus_index, left_divide_index) + ')(' + right_substring + ')+(' + left_substring + ')(' + differentiate(right_substring, right_plus_index, right_minus_index, right_divide_index) + ')'
+    #third case of product rule ->   in the form (sinx+1)(lnx+1)
     if string[0] == '(':
         product_index = product_check(string)
         left_substring = string[0:product_index]
@@ -465,9 +425,7 @@ def differentiate(string, plus_index, minus_index, divide_index, exponent_index)
         right_minus_index = minus_index_calc(right_substring)
         left_divide_index = divide_index_calc(left_substring)
         right_divide_index = divide_index_calc(right_substring)
-        left_exponent_index = exponent_index_calc(left_substring)
-        right_exponent_index = exponent_index_calc(right_substring)
-        return '(' + differentiate(left_substring, left_plus_index, left_minus_index, left_divide_index, left_exponent_index) + ')(' + right_substring + ')+(' + left_substring + ')(' + differentiate(right_substring, right_plus_index, right_minus_index, right_divide_index, right_exponent_index) + ')'
+        return '(' + differentiate(left_substring, left_plus_index, left_minus_index, left_divide_index) + ')(' + right_substring + ')+(' + left_substring + ')(' + differentiate(right_substring, right_plus_index, right_minus_index, right_divide_index) + ')'
     else:
         return "Invalid format for: -" + string + '- '
 
