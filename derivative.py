@@ -155,69 +155,80 @@ def differentiate(string, plus_index, minus_index, divide_index):
         return "1/(1+x^2)"
     #checks if the string is contained within parentheses
     if string[0] == '(' and string[-1] == ')' and function_check(string, 0):
-        center_plus_index = plus_index_calc(string[1:-1])
-        center_minus_index = minus_index_calc(string[1:-1])
-        center_divide_index = divide_index_calc(string[1:-1])
+        inside_parenthesis = string[1:-1]
+        center_plus_index = plus_index_calc(inside_parenthesis)
+        center_minus_index = minus_index_calc(inside_parenthesis)
+        center_divide_index = divide_index_calc(inside_parenthesis)
         return '(' + differentiate(string[1:-1], center_plus_index, center_minus_index, center_divide_index) + ')'
     #checks if the string is a function inside of sinx
-    if string[0:4] == "sin(" and string[-1] == ')' and function_check(string, len('sin')):
-        center_plus_index = plus_index_calc(string[4:-1])
-        center_minus_index = minus_index_calc(string[4:-1])
-        center_divide_index = divide_index_calc(string[4:-1])
+    if string.startswith('sin(') and string.endswith(')') and function_check(string, len('sin')):
+        inside_parenthesis = string[4:-1]
+        center_plus_index = plus_index_calc(inside_parenthesis)
+        center_minus_index = minus_index_calc(inside_parenthesis)
+        center_divide_index = divide_index_calc(inside_parenthesis)
         return '(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index) + ')cos(' + string[4:]
     #checks if the string is a function inside of cosx
-    if string[0:4] == "cos(" and string[-1] == ')' and function_check(string, len('cos')):
-        center_plus_index = plus_index_calc(string[4:-1])
-        center_minus_index = minus_index_calc(string[4:-1])
-        center_divide_index = divide_index_calc(string[4:-1])
+    if string.startswith('cos(') and string.endswith(')') and function_check(string, len('cos')):
+        inside_parenthesis = string[4:-1]
+        center_plus_index = plus_index_calc(inside_parenthesis)
+        center_minus_index = minus_index_calc(inside_parenthesis)
+        center_divide_index = divide_index_calc(inside_parenthesis)
         return '-(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "sin(" + string[4:]
     #checks if the string is a function inside of tanx
-    if string[0:4] == "tan(" and string[-1] == ')' and function_check(string, len('tan')):
-        center_plus_index = plus_index_calc(string[4:-1])
-        center_minus_index = minus_index_calc(string[4:-1])
-        center_divide_index = divide_index_calc(string[4:-1])
+    if string.startswith('tan(') and string.endswith(')') and function_check(string, len('tan')):
+        inside_parenthesis = string[4:-1]
+        center_plus_index = plus_index_calc(inside_parenthesis)
+        center_minus_index = minus_index_calc(inside_parenthesis)
+        center_divide_index = divide_index_calc(inside_parenthesis)
         return '(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "(sec(" + string[4:] + "))^2"
     #checks if the string is a function inside of cotx
-    if string[0:4] == "cot(" and string[-1] == ')' and function_check(string, len('cot')):
-        center_plus_index = plus_index_calc(string[4:-1])
-        center_minus_index = minus_index_calc(string[4:-1])
-        center_divide_index = divide_index_calc(string[4:-1])
+    if string.startswith('cot(') and string.endswith(')') and function_check(string, len('cot')):
+        inside_parenthesis = string[4:-1]
+        center_plus_index = plus_index_calc(inside_parenthesis)
+        center_minus_index = minus_index_calc(inside_parenthesis)
+        center_divide_index = divide_index_calc(inside_parenthesis)
         return '-(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "(csc(" + string[4:] + "))^2"
     #checks if the string is a function inside of secx
-    if string[0:4] == "sec(" and string[-1] == ')' and function_check(string, len('sec')):
-        center_plus_index = plus_index_calc(string[4:-1])
-        center_minus_index = minus_index_calc(string[4:-1])
-        center_divide_index = divide_index_calc(string[4:-1])
+    if string.startswith('sec(') and string.endswith(')') and function_check(string, len('sec')):
+        inside_parenthesis = string[4:-1]
+        center_plus_index = plus_index_calc(inside_parenthesis)
+        center_minus_index = minus_index_calc(inside_parenthesis)
+        center_divide_index = divide_index_calc(inside_parenthesis)
         return '(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "sec(" + string[4:] + "tan(" + string[4:]
     #checks if the string is a function inside of cscx
-    if string[0:4] == "csc(" and string[-1] == ')' and function_check(string, len('csc')):
-        center_plus_index = plus_index_calc(string[4:-1])
-        center_minus_index = minus_index_calc(string[4:-1])
-        center_divide_index = divide_index_calc(string[4:-1])
+    if string.startswith('csc(') and string.endswith(')') and function_check(string, len('csc')):
+        inside_parenthesis = string[4:-1]
+        center_plus_index = plus_index_calc(inside_parenthesis)
+        center_minus_index = minus_index_calc(inside_parenthesis)
+        center_divide_index = divide_index_calc(inside_parenthesis)
         return '-(' + differentiate(string[4:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "csc(" + string[4:] + "cot(" + string[4:]
     #checks if the string is a function inside of arcsinx
-    if string[0:7] == 'arcsin(' and string[-1] == ')' and function_check(string, len('arcsin')):
-        center_plus_index = plus_index_calc(string[7:-1])
-        center_minus_index = minus_index_calc(string[7:-1])
-        center_divide_index = divide_index_calc(string[7:-1])
+    if string.startswith('arcsin(') and string.endswith(')') and function_check(string, len('arcsin')):
+        inside_parenthesis = string[7:-1]
+        center_plus_index = plus_index_calc(inside_parenthesis)
+        center_minus_index = minus_index_calc(inside_parenthesis)
+        center_divide_index = divide_index_calc(inside_parenthesis)
         return '(' + differentiate(string[7:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "(1/((1-(" + string[7:] + '^2)^(1/2))'
     #checks if the string is a function inside of arccosx
-    if string[0:7] == 'arccos(' and string[-1] == ')' and function_check(string, len('arccos')):
-        center_plus_index = plus_index_calc(string[7:-1])
-        center_minus_index = minus_index_calc(string[7:-1])
-        center_divide_index = divide_index_calc(string[7:-1])
+    if string.startswith('arccos(') and string.endswith(')') and function_check(string, len('arccos')):
+        inside_parenthesis = string[7:-1]
+        center_plus_index = plus_index_calc(inside_parenthesis)
+        center_minus_index = minus_index_calc(inside_parenthesis)
+        center_divide_index = divide_index_calc(inside_parenthesis)
         return '-(' + differentiate(string[7:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "(1/((1-(" + string[7:] + '^2)^(1/2))'
     #checks if the string is a function inside of arctanx
-    if string[0:7] == 'arctan(' and string[-1] == ')' and function_check(string, len('arctan')):
-        center_plus_index = plus_index_calc(string[7:-1])
-        center_minus_index = minus_index_calc(string[7:-1])
-        center_divide_index = divide_index_calc(string[7:-1])
+    if string.startswith('arctan(') and string.endswith(')') and function_check(string, len('arctan')):
+        inside_parenthesis = string[7:-1]
+        center_plus_index = plus_index_calc(inside_parenthesis)
+        center_minus_index = minus_index_calc(inside_parenthesis)
+        center_divide_index = divide_index_calc(inside_parenthesis)
         return '(' + differentiate(string[7:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "(1/(1+(" + string[7:] + '^2))'
     #checks if the string is a function inside of lnx
-    if string[0:3] == "ln(" and string[-1] == ')' and function_check(string, len('ln')):
-        center_plus_index = plus_index_calc(string[3:-1])
-        center_minus_index = minus_index_calc(string[3:-1])
-        center_divide_index = divide_index_calc(string[3:-1])
+    if string.startswith('ln(') and string.endswith(')') and function_check(string, len('ln')):
+        inside_parenthesis = string[3:-1]
+        center_plus_index = plus_index_calc(inside_parenthesis)
+        center_minus_index = minus_index_calc(inside_parenthesis)
+        center_divide_index = divide_index_calc(inside_parenthesis)
         return '(' + differentiate(string[3:-1], center_plus_index, center_minus_index, center_divide_index) + ')' + "(1/(" + string[3:] + ')'
     #checks if the string is a constant raised to the power of an expression
     if string.count('^') == 1 and (check_real(string[0:string.index('^')]) or string[0] == 'e'):
@@ -225,17 +236,19 @@ def differentiate(string, plus_index, minus_index, divide_index):
         if string[0] == 'e':
             if string[int(string.index('^')) + 1] == 'x':
                 return string
-            center_plus_index = plus_index_calc(string[3:-1])
-            center_minus_index = minus_index_calc(string[3:-1])
-            center_divide_index = divide_index_calc(string[3:-1])
+            inside_parenthesis = string[3:-1]
+            center_plus_index = plus_index_calc(inside_parenthesis)
+            center_minus_index = minus_index_calc(inside_parenthesis)
+            center_divide_index = divide_index_calc(inside_parenthesis)
             return "(" + differentiate(string[int(string.index('^')) + 1:], center_plus_index, center_minus_index, center_divide_index) + ')' + string
         #differentiates an exponential function with a real base
         else:
             if string[int(string.index('^')) + 1] == 'x':
                 return string + '(ln(' + string[0:string.index('^')] + '))'
-            center_plus_index = plus_index_calc(string[3:-1])
-            center_minus_index = minus_index_calc(string[3:-1])
-            center_divide_index = divide_index_calc(string[3:-1])
+            inside_parenthesis = string[3:-1]
+            center_plus_index = plus_index_calc(inside_parenthesis)
+            center_minus_index = minus_index_calc(inside_parenthesis)
+            center_divide_index = divide_index_calc(inside_parenthesis)
             return "(" + differentiate(string[int(string.index('^')) + 1:], center_plus_index, center_minus_index, center_divide_index) + ')' + '(ln(' + string[0:string.index('^')] + '))' + string 
     
     #checks if the string contains plus signs
