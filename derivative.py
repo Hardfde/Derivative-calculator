@@ -33,12 +33,12 @@ def next_paren(string, start_index):
 def plus_index_calc(string):
     plus_index = defaultdict(list)
     a = 0
-    for i in range(len(string)):
-        if string[i] == '(':
+    for i, char in enumerate(string):
+        if char == '(':
             a += 1
-        elif string[i] == ')':
+        elif char == ')':
             a -= 1
-        elif string[i] == '+':
+        elif char == '+':
             for d in range(a, -1, -1):
                 plus_index[d].append(i)
     return plus_index
@@ -47,12 +47,12 @@ def plus_index_calc(string):
 def minus_index_calc(string):
     minus_index = defaultdict(list)
     a = 0
-    for i in range(len(string)):
-        if string[i] == '(':
+    for i, char in enumerate(string):
+        if char == '(':
             a += 1
-        elif string[i] == ')':
+        elif char == ')':
             a -= 1
-        elif string[i] == '-':
+        elif char == '-':
             for d in range(a, -1, -1):
                 minus_index[d].append(i)
     return minus_index
@@ -61,12 +61,12 @@ def minus_index_calc(string):
 def divide_index_calc(string):
     divide_index = defaultdict(list)
     a = 0
-    for i in range(len(string)):
-        if string[i] == '(':
+    for i, char in enumerate(string):
+        if char == '(':
             a += 1
-        elif string[i] == ')':
+        elif char == ')':
             a -= 1
-        elif string[i] == '/':
+        elif char == '/':
             for d in range(a, -1, -1):
                 divide_index[d].append(i)
     return divide_index
@@ -87,10 +87,10 @@ def function_check(string, starting_char):
 #finds the index of the first character after parenthesis have closed
 def product_check(string):
     a = 0
-    for i in range(len(string)):
-        if string[i] == '(':
+    for i, char in enumerate(string):
+        if char == '(':
             a += 1
-        elif string[i] == ')':
+        elif char == ')':
             a -= 1
         if a == 0:
             return int(i + 1)
